@@ -1,0 +1,7 @@
+package: krypton-server
+import:
+- package: github.com/astaxie/beego
+testImport:
+- package: github.com/smartystreets/goconvey
+  subpackages:
+  - convey
