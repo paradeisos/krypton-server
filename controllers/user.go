@@ -8,5 +8,5 @@ type LoginController struct {
 	beego.Controller
 }
 
-func (c *LoginController) Get() {
+func (c *LoginController) Login() {
 }
