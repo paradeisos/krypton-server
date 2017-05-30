@@ -1,6 +1,6 @@
 package models
 
-type Config struct {
+type Option struct {
 	Host     string `json:"host"`
 	User     string `json:"user"`
 	Password string `json:"password"`
