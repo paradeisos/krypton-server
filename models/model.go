@@ -1,12 +1,12 @@
 package models
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
+	"github.com/astaxie/beego"
 	"gopkg.in/mgo.v2"
-
-	"github.com/dolab/gogo"
 )
 
 type Model struct {
@@ -14,8 +14,7 @@ type Model struct {
 	session    *mgo.Session
 	collection *mgo.Collection
 
-	config  *Config
-	logger  gogo.Logger
+	option  *Option
 	indexes map[string]bool
 }
 
@@ -24,27 +23,29 @@ const (
 	MongoSyncTimeout = 5
 )
 
-func NewModel(config *Config, logger gogo.Logger) *Model {
+func NewModel(option *Option) *Model {
 	dsn := "mongodb://"
-	if config.User != "" && config.Password != "" {
-		dsn += config.User + ":" + config.Password + "@"
+	if option.User != "" && option.Password != "" {
+		dsn += option.User + ":" + option.Password + "@"
 	}
-	dsn += config.Host
-	if config.Database != "" {
-		dsn += "/" + config.Database
+	dsn += option.Host
+	if option.Database != "" {
+		dsn += "/" + option.Database
 	}
 
 	session, err := mgo.Dial(dsn)
 	if err != nil {
-		logger.Panic(err.Error())
+		beego.Error(err.Error())
+		panic(err)
 	}
 
 	if err := session.Ping(); err != nil {
-		logger.Panic(err.Error())
+		beego.Error(err.Error())
+		panic(err)
 	}
 
 	// set session mode
-	switch config.Mode {
+	switch option.Mode {
 	case "Strong":
 		session.SetMode(mgo.Strong, true)
 	case "Monotonic":
@@ -62,19 +63,19 @@ func NewModel(config *Config, logger gogo.Logger) *Model {
 	})
 
 	// set pool size
-	if config.Pool > 0 {
-		if config.Pool > MongoPoolMax {
-			config.Pool = MongoPoolMax
+	if option.Pool > 0 {
+		if option.Pool > MongoPoolMax {
+			option.Pool = MongoPoolMax
 		}
 
-		session.SetPoolLimit(config.Pool)
+		session.SetPoolLimit(option.Pool)
 	}
 
 	// set op response timeout
-	if config.Timeout == 0 {
-		config.Timeout = MongoSyncTimeout
+	if option.Timeout == 0 {
+		option.Timeout = MongoSyncTimeout
 	}
-	session.SetSyncTimeout(time.Duration(config.Timeout) * time.Second)
+	session.SetSyncTimeout(time.Duration(option.Timeout) * time.Second)
 
 	// panic as early as possible
 	if err := session.Ping(); err != nil {
@@ -83,14 +84,13 @@ func NewModel(config *Config, logger gogo.Logger) *Model {
 
 	return &Model{
 		session: session,
-		config:  config,
-		logger:  logger,
+		option:  option,
 		indexes: make(map[string]bool),
 	}
 }
 
 func (model *Model) Use(database string) *Model {
-	model.config.Database = database
+	model.option.Database = database
 
 	return model
 }
@@ -98,8 +98,7 @@ func (model *Model) Use(database string) *Model {
 func (model *Model) Copy() *Model {
 	return &Model{
 		session: model.session.Copy(),
-		config:  model.config,
-		logger:  model.logger,
+		option:  model.option,
 	}
 }
 
@@ -110,12 +109,8 @@ func (model *Model) C(name string) *Model {
 	return copiedDB
 }
 
-func (model *Model) Config() *Config {
-	return model.config
-}
-
 func (model *Model) Database() string {
-	return model.config.Database
+	return model.option.Database
 }
 
 func (model *Model) Session() *mgo.Session {
@@ -139,7 +134,7 @@ func (model *Model) Query(collectionName string, collectionIndexes []mgo.Index, 
 				if err := copiedCollection.EnsureIndex(index); err != nil {
 					model.indexes[collectionName] = false
 
-					model.logger.Errorf("Ensure index of %s (%#v) : %v", collectionName, index, err)
+					beego.Error(fmt.Sprintf("Ensure index of %s (%#v) : %v", collectionName, index, err))
 				}
 			}
 
