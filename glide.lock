@@ -1,5 +1,5 @@
 hash: 269685acfc524124fcc31e3ae2e659ccee31ad890c628e08506cce50a406d631
-updated: 2017-05-27T17:16:21.356760504+08:00
+updated: 2017-05-30T21:09:01.415454669+08:00
 imports:
 - name: github.com/astaxie/beego
   version: cab8458c1c4a5a3b4bf5192922be620e6dede15b
@@ -12,13 +12,32 @@ imports:
   - session
   - toolbox
   - utils
+- name: gopkg.in/mgo.v2
+  version: 3f83fa5005286a7fe593b055f0d7771a7dce4655
+  subpackages:
+  - bson
+  - internal/json
+  - internal/sasl
+  - internal/scram
 testImports:
+- name: github.com/davecgh/go-spew
+  version: 346938d642f2ec3594ed81d874461961cd0faa76
+  subpackages:
+  - spew
+- name: github.com/golib/assert
+  version: 51727f1f825d2d19f13e7822f8f565c15b4b20f9
 - name: github.com/gopherjs/gopherjs
-  version: 6997325cc76f13635f68ad9e1c38544966eb7de2
+  version: 7cde3d36aea3e1b3be7827c4dcbe6bbae73d012e
   subpackages:
   - js
 - name: github.com/jtolds/gls
   version: 77f18212c9c7edc9bd6a33d383a7b545ce62f064
+- name: github.com/pmezard/go-difflib
+  version: 792786c7400a136282c1664665ae0a8db921c6c2
+  subpackages:
+  - difflib
+- name: github.com/satori/go.uuid
+  version: 5bf94b69c6b68ee1b541973bb8e1144db23a194b
 - name: github.com/smartystreets/assertions
   version: f8459f92181409546d2762c9e9c4bedc23c92d76
   subpackages:

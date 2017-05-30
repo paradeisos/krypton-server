@@ -13,6 +13,6 @@ A server for kryption
  * install glide for packages managment
  ```
  curl https://glide.sh/get | sh
-
+ glide install
  ```
 
