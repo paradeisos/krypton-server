@@ -33,7 +33,7 @@ func Test_FindByUid(t *testing.T) {
 	// duplicated save
 	assertion.Nil(tomato.Save())
 
-	tomatoes, err := Tomato.FindByUid(uid)
+	tomatoes, err := Tomato.AllByUid(uid)
 	assertion.Nil(err)
 	assertion.Equal(1, len(tomatoes))
 	assertion.Equal(tomato.Id, tomatoes[0].Id)

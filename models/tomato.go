@@ -3,7 +3,7 @@ package models
 import (
 	"time"
 
-	mgo "gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2"
 
 	"gopkg.in/mgo.v2/bson"
 )
@@ -63,6 +63,7 @@ func (tomato *TomatoModel) Save() (err error) {
 					"desc":       tomato.Desc,
 					"start":      tomato.Start,
 					"end":        tomato.End,
+					"finished":   tomato.Finished,
 					"updated_at": t,
 				},
 			}
@@ -74,7 +75,7 @@ func (tomato *TomatoModel) Save() (err error) {
 	return
 }
 
-func (_ *_Tomato) FindByUid(uid string) (tomatoes []*TomatoModel, err error) {
+func (_ *_Tomato) AllByUid(uid string) (tomatoes []*TomatoModel, err error) {
 	if uid == "" || uid != "" && !bson.IsObjectIdHex(uid) {
 		err = ErrInvalidId
 		return
