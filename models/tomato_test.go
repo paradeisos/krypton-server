@@ -38,3 +38,33 @@ func Test_FindByUid(t *testing.T) {
 	assertion.Equal(1, len(tomatoes))
 	assertion.Equal(tomato.Id, tomatoes[0].Id)
 }
+
+func Test_Find(t *testing.T) {
+	assertion := assert.New(t)
+	start := time.Now()
+	end := start.Add(25 * time.Minute)
+	uid := bson.NewObjectId().Hex()
+
+	tomato := Tomato.NewTomatoModel(uid, start, end, "test", true)
+	assertion.Nil(tomato.Save())
+
+	findResult, err := Tomato.Find(tomato.Id.Hex())
+	assertion.Nil(err)
+	assertion.Equal(findResult.Id, tomato.Id)
+}
+
+func Test_Delete(t *testing.T) {
+	assertion := assert.New(t)
+	start := time.Now()
+	end := start.Add(25 * time.Minute)
+	uid := bson.NewObjectId().Hex()
+
+	tomato := Tomato.NewTomatoModel(uid, start, end, "test", true)
+	assertion.Nil(tomato.Save())
+
+	assertion.Nil(tomato.Delete())
+
+	_, err := Tomato.Find(tomato.Id.Hex())
+	assertion.NotNil(err)
+	assertion.Contains(err.Error(), "not found")
+}

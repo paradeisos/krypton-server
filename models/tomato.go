@@ -75,6 +75,28 @@ func (tomato *TomatoModel) Save() (err error) {
 	return
 }
 
+func (tomato *TomatoModel) Delete() (err error) {
+	Tomato.Query(func(c *mgo.Collection) {
+		err = c.RemoveId(tomato.Id)
+	})
+
+	return
+}
+
+func (_ *_Tomato) Find(id string) (tomato *TomatoModel, err error) {
+	if !bson.IsObjectIdHex(id) {
+		return nil, ErrInvalidId
+	}
+
+	bsonID := bson.ObjectIdHex(id)
+
+	Tomato.Query(func(c *mgo.Collection) {
+		err = c.FindId(bsonID).One(&tomato)
+	})
+
+	return
+}
+
 func (_ *_Tomato) AllByUid(uid string) (tomatoes []*TomatoModel, err error) {
 	if uid == "" || uid != "" && !bson.IsObjectIdHex(uid) {
 		err = ErrInvalidId
