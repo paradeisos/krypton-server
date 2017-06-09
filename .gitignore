@@ -15,3 +15,5 @@
 
 krypton-server
 vendor/
+
+.vscode/
