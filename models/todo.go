@@ -29,7 +29,7 @@ type TodoModel struct {
 	isNewRecord bool `bson:"-"`
 }
 
-func (_ *_Todo) NewTodoModel(uid, title, content string, due time.Time) *TodoModel {
+func (_ *_Todo) NewModel(uid, title, content string, due time.Time) *TodoModel {
 	return &TodoModel{
 		Id:          bson.NewObjectId(),
 		Uid:         uid,
@@ -92,15 +92,20 @@ func (_ *_Todo) List(params ListTodoParams) (total int, todos []*TodoModel, err 
 
 	query := bson.M{}
 	if !params.From.IsZero() && !params.To.IsZero() {
-
 		if params.From.After(params.To) {
 			return 0, nil, ErrInvalidParams
 		}
+	}
 
-		query["due"] = bson.M{
-			"$gte": params.From,
-			"$lte": params.To,
+	if !params.From.IsZero() || !params.To.IsZero() {
+		dueRange := bson.M{}
+		if !params.From.IsZero() {
+			dueRange["$gte"] = params.From
 		}
+		if !params.To.IsZero() {
+			dueRange["$lte"] = params.To
+		}
+		query["due"] = dueRange
 	}
 
 	if params.Uid != "" {

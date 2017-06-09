@@ -16,7 +16,7 @@ func Test_Todo_CRUD(t *testing.T) {
 	title := "Buy Milk"
 	content := "Go to market."
 
-	todo := Todo.NewTodoModel(uid, title, content, due)
+	todo := Todo.NewModel(uid, title, content, due)
 
 	// create
 	assertion.Nil(todo.Save())
