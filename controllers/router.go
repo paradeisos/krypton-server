@@ -6,4 +6,5 @@ import (
 
 func init() {
 	beego.Router("/user", &User{})
+	beego.Router("/tomato", &Tomato{})
 }
