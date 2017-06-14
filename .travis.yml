@@ -14,11 +14,5 @@ before_install:
 install:
   - glide install
 
-before_script:
-
 script:
-  - echo "$TRAVIS_BRANCH"@"$TRAVIS_COMMIT"
-  - cd $TRAVIS_BUILD_DIR/app && source env.sh && make travis
-  - cd $TRAVIS_BUILD_DIR/evmapi && source env.sh && make travis
-  - cd $TRAVIS_BUILD_DIR/evmadmin && source env.sh && make travis
-  - cd $TRAVIS_BUILD_DIR/evmbill && source env.sh && make travis
+  make travis
