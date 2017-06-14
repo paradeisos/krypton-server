@@ -8,9 +8,6 @@ language: go
 go:
   - 1.7.3
 
-before_install:
-   curl https://glide.sh/get | sh
-
 install:
   - glide install
 
