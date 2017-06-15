@@ -13,6 +13,7 @@ before_install:
 
 install:
   - glide install
+  - export GOPATH=$(pwd):$GOPATH
 
 script:
   make travis
