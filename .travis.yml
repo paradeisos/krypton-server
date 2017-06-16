@@ -9,10 +9,13 @@ go:
   - 1.7.3
 
 before_install:
+  - cd ..
+  - mv krypton-server $GOPATH/src/.
   - go get github.com/Masterminds/glide
 
 install:
   - echo $GOPATH
+  - cd $GOPATH/src/krypton-server
   - glide install
 
 script:
