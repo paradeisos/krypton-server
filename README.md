@@ -1,6 +1,8 @@
 # krypton-server
 A server for kryption
 
+[![Build Status](https://travis-ci.org/paradeisos/krypton-server.svg?branch=master)](https://travis-ci.org/paradeisos/krypton-server)
+
 ### Development 
 * install beego
 ```
