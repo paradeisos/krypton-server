@@ -8,8 +8,8 @@ goinstall:
 	glide install
 
 gotest:
-	go test -p 1 krypton-server/controllers
-	go test -p 1 krypton-server/models
+	go test -p 1 ./controllers
+	go test -p 1 ./models
 
 gopackage:
 	bee package

@@ -12,10 +12,8 @@ before_install:
   - go get github.com/Masterminds/glide
 
 install:
-  - glide install
-  - export GOPATH=$(pwd):$GOPATH
-  - echo $(pwd)
   - echo $GOPATH
+  - glide install
 
 script:
   make travis
