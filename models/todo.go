@@ -91,20 +91,18 @@ func (_ *_Todo) List(params ListTodoParams) (total int, todos []*TodoModel, err 
 	}
 
 	query := bson.M{}
-	if !params.From.IsZero() && !params.To.IsZero() {
-		if params.From.After(params.To) {
-			return 0, nil, ErrInvalidParams
-		}
+	if params.From.After(params.To) {
+		return 0, nil, ErrInvalidParams
 	}
 
-	if !params.From.IsZero() || !params.To.IsZero() {
-		dueRange := bson.M{}
-		if !params.From.IsZero() {
-			dueRange["$gte"] = params.From
-		}
-		if !params.To.IsZero() {
-			dueRange["$lte"] = params.To
-		}
+	dueRange := bson.M{}
+	if !params.From.IsZero() {
+		dueRange["$gte"] = params.From
+	}
+	if !params.To.IsZero() {
+		dueRange["$lte"] = params.To
+	}
+	if len(dueRange) > 0 {
 		query["due"] = dueRange
 	}
 
