@@ -35,7 +35,7 @@ func (c *User) Login() {
 	} else {
 		user, err = models.User.FindByUsername(params.Name)
 	}
-	if err != nil {
+	if err != nil || user.Password != params.Password {
 		c.Data["json"] = errors.NewErrorResponse(errors.InvalidParameter)
 		c.ServeJSON()
 		return
