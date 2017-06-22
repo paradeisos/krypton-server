@@ -8,8 +8,8 @@ import (
 
 type JwtClaims struct {
 	*jwt.StandardClaims
-	UserID string
-	Passwd string
+	UserID   string
+	UserName string
 }
 
 const (
@@ -20,7 +20,7 @@ var (
 	key []byte = []byte("kryptoner@krypton.com")
 )
 
-func GenToken(userID, passwd string, dt int64) string {
+func GenToken(userID, userName string, dt int64) string {
 	claims := JwtClaims{
 		&jwt.StandardClaims{
 			NotBefore: time.Now().Unix(),
@@ -28,7 +28,7 @@ func GenToken(userID, passwd string, dt int64) string {
 			Issuer:    TokenIssuer,
 		},
 		userID,
-		passwd,
+		userName,
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
