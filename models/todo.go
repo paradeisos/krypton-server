@@ -137,5 +137,5 @@ func (_ *_Todo) Delete(id string) (err error) {
 }
 
 func (_ *_Todo) Query(query func(c *mgo.Collection)) {
-	Mongo().Query(tomatoCollection, tomatoIndexes, query)
+	Mongo().Query(todoCollection, todoIndexes, query)
 }
