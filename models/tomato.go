@@ -42,6 +42,14 @@ func (_ *_Tomato) NewTomatoModel(uid string, start, end time.Time, desc string, 
 	}
 }
 
+func (tomato *TomatoModel) Update() (err error) {
+	if !tomato.Id.Valid() {
+		return ErrInvalidId
+	}
+
+	return tomato.Save()
+}
+
 func (tomato *TomatoModel) Save() (err error) {
 	if !tomato.Id.Valid() {
 		return ErrInvalidId
