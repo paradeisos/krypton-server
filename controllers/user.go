@@ -31,18 +31,13 @@ func (c *User) Login() {
 
 	if strings.Contains(params.Name, "@") {
 		user, err = models.User.FindByEmail(params.Name)
-		if err != nil {
-			c.Data["json"] = errors.NewErrorResponse(errors.InvalidParameter)
-			c.ServeJSON()
-			return
-		}
 	} else {
 		user, err = models.User.FindByUsername(params.Name)
-		if err != nil {
-			c.Data["json"] = errors.NewErrorResponse(errors.InvalidParameter)
-			c.ServeJSON()
-			return
-		}
+	}
+	if err != nil {
+		c.Data["json"] = errors.NewErrorResponse(errors.InvalidParameter)
+		c.ServeJSON()
+		return
 	}
 
 	c.Data["json"] = Newresponse(http.StatusOK, "", user)
