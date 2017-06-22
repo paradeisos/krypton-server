@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"krypton-server/errors"
 	"krypton-server/models"
+	"krypton-server/utils/jwt"
 	"net/http"
 
 	"strings"
@@ -39,6 +40,16 @@ func (c *User) Login() {
 		c.ServeJSON()
 		return
 	}
+
+	token := jwt.GenToken(user.Id.Hex(), user.Username, 86400)
+	cookie := http.Cookie{
+		Name:   "Authorization",
+		Value:  token,
+		Path:   "/",
+		MaxAge: 86400,
+	}
+
+	http.SetCookie(c.Ctx.ResponseWriter, &cookie)
 
 	c.Data["json"] = Newresponse(http.StatusOK, "", user)
 	c.ServeJSON()
