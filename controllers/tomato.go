@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"krypton-server/errors"
 	"krypton-server/models"
 
 	"net/http"
@@ -15,7 +16,6 @@ type Tomato struct {
 
 func (c *Tomato) Post() {
 	var params *CreateTomatoParams
-	resp := &Response{}
 
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &params)
 	if err != nil {
@@ -28,7 +28,31 @@ func (c *Tomato) Post() {
 		beego.Error(err)
 	}
 
-	resp.Status = http.StatusOK
-	c.Data["json"] = resp
+	c.Data["json"] = Newresponse(http.StatusOK, "", nil)
+	c.ServeJSON()
+}
+
+func (c *Tomato) Delete() {
+	id := c.GetString("id")
+	if id == "" {
+		c.Data["json"] = errors.NewErrorResponse(errors.InvalidParameter)
+		c.ServeJSON()
+		return
+	}
+
+	tomato, err := models.Tomato.Find(id)
+	if err != nil {
+		c.Data["json"] = errors.NewErrorResponse(errors.InvalidParameter)
+		c.ServeJSON()
+		return
+	}
+
+	if tomato.Delete() != nil {
+		c.Data["json"] = errors.NewErrorResponse(errors.InternalError)
+		c.ServeJSON()
+		return
+	}
+
+	c.Data["json"] = Newresponse(http.StatusOK, "", nil)
 	c.ServeJSON()
 }
