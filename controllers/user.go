@@ -41,10 +41,6 @@ func (c *User) Login() {
 		return
 	}
 
-	sess := c.StartSession()
-	sess.Set("userid", user.Id)
-	sess.Set("pwd", user.Password)
-
 	token := jwt.GenToken(user.Id.Hex(), user.Password, 86400)
 	cookie := http.Cookie{
 		Name:   "Authorization",
