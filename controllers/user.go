@@ -41,6 +41,12 @@ func (c *User) Login() {
 		return
 	}
 
+	if user.Password != params.Password {
+		c.Data["json"] = errors.NewErrorResponse(errors.InvalidParameter)
+		c.ServeJSON()
+		return
+	}
+
 	token := jwt.GenToken(user.Id.Hex(), user.Username, 86400)
 	cookie := http.Cookie{
 		Name:   "Authorization",
