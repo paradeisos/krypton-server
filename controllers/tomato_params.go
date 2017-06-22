@@ -9,3 +9,11 @@ type CreateTomatoParams struct {
 	Desc     string    `json:"desc"`
 	Finished bool      `json:"finished"`
 }
+
+type UpdateTomatoParams struct {
+	ID       string    `json:"id"`
+	Start    time.Time `json:"start"`
+	End      time.Time `json:"end"`
+	Desc     string    `json:"desc"`
+	Finished bool      `json:"finished"`
+}

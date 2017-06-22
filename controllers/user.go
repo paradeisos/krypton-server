@@ -2,16 +2,46 @@ package controllers
 
 import (
 	"encoding/json"
-	"github.com/astaxie/beego"
+	"krypton-server/errors"
 	"krypton-server/models"
 	"net/http"
+
+	"strings"
+
+	"github.com/astaxie/beego"
 )
 
 type User struct {
 	beego.Controller
 }
 
+//TODO: session
 func (c *User) Login() {
+	var params *UserLoginParams
+	if json.Unmarshal(c.Ctx.Input.RequestBody, &params) != nil {
+		c.Data["json"] = errors.NewErrorResponse(errors.InvalidParameter)
+		c.ServeJSON()
+		return
+	}
+
+	var (
+		user *models.UserModel
+		err  error
+	)
+
+	if strings.Contains(params.Name, "@") {
+		user, err = models.User.FindByEmail(params.Name)
+	} else {
+		user, err = models.User.FindByUsername(params.Name)
+	}
+	if err != nil {
+		c.Data["json"] = errors.NewErrorResponse(errors.InvalidParameter)
+		c.ServeJSON()
+		return
+	}
+
+	c.Data["json"] = Newresponse(http.StatusOK, "", user)
+	c.ServeJSON()
 }
 
 // register
