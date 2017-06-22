@@ -39,24 +39,24 @@ func GenToken(userID, userName string, dt int64) string {
 	return ss
 }
 
-func DestroyToken() string {
-	claims := JwtClaims{
-		&jwt.StandardClaims{
-			NotBefore: int64(time.Now().Unix() - 99998),
-			ExpiresAt: int64(time.Now().Unix() - 99999),
-			Issuer:    TokenIssuer,
-		},
-		"exit",
-		"exit",
-	}
+// func DestroyToken() string {
+// 	claims := JwtClaims{
+// 		&jwt.StandardClaims{
+// 			NotBefore: int64(time.Now().Unix() - 99998),
+// 			ExpiresAt: int64(time.Now().Unix() - 99999),
+// 			Issuer:    TokenIssuer,
+// 		},
+// 		"exit",
+// 		"exit",
+// 	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	ss, err := token.SignedString(key)
-	if err != nil {
-		//TODO
-	}
-	return ss
-}
+// 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+// 	ss, err := token.SignedString(key)
+// 	if err != nil {
+// 		//TODO
+// 	}
+// 	return ss
+// }
 
 func CheckToken(token string) bool {
 	_, err := jwt.Parse(token, func(*jwt.Token) (interface{}, error) {

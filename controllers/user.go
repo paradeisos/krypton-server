@@ -55,6 +55,14 @@ func (c *User) Login() {
 	c.ServeJSON()
 }
 
+func (c *User) Logout() {
+	cookie := http.Cookie{Name: "Authorization", Value: "", Path: "/", MaxAge: -1}
+	http.SetCookie(c.Ctx.ResponseWriter, &cookie)
+
+	c.Data["json"] = Newresponse(http.StatusOK, "", nil)
+	c.ServeJSON()
+}
+
 // register
 func (c *User) Post() {
 	var params *UserRegisterParams
