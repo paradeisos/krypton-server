@@ -136,6 +136,20 @@ func (_ *_Todo) Delete(id string) (err error) {
 	return
 }
 
+func (_ *_Todo) Find(id string) (todo *TodoModel, err error) {
+	if !bson.IsObjectIdHex(id) {
+		return nil, ErrInvalidId
+	}
+
+	bsonID := bson.ObjectIdHex(id)
+
+	Todo.Query(func(c *mgo.Collection) {
+		err = c.FindId(bsonID).One(&todo)
+	})
+
+	return
+}
+
 func (_ *_Todo) Query(query func(c *mgo.Collection)) {
 	Mongo().Query(todoCollection, todoIndexes, query)
 }
