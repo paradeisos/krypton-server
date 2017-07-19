@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -84,24 +85,44 @@ func (c *User) Register() {
 		beego.Error(err)
 	}
 
+	token, err := sessionManager.NewSession(user.Id.Hex(), params.Username).Token()
+	if err != nil {
+		c.Data["json"] = errors.NewErrorResponse(errors.InternalError)
+		c.ServeJSON()
+		return
+	}
+
+	mailer.SendRegisterMail(params.Email, fmt.Sprintf("%s%s?activeCode=%s", beego.AppConfig.String("host")+"/user/active", token))
+
 	resp.Status = http.StatusOK
 	c.Data["json"] = resp
 	c.ServeJSON()
 }
 
 func (c *User) Active() {
-	var params *UserRegisterParams
+	token := c.GetString("activeCode")
 	resp := &Response{}
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &params)
+	session, err := sessionManager.NewSessionByToken(token)
 	if err != nil {
-		beego.Error(err)
-
+		c.Data["json"] = errors.NewErrorResponse(errors.AccessForbidden)
+		c.ServeJSON()
+		return
 	}
 
-	user := models.User.NewUserModel(params.Username, params.Email, params.Password, "")
+	username := session.UserName
+	user, err := models.User.FindByUsername(username)
+	if err != nil {
+		c.Data["json"] = errors.NewErrorResponse(errors.InternalError)
+		c.ServeJSON()
+		return
+	}
+
+	user.Status = models.UserStatusActive
 	err = user.Save()
 	if err != nil {
-		beego.Error(err)
+		c.Data["json"] = errors.NewErrorResponse(errors.InternalError)
+		c.ServeJSON()
+		return
 	}
 
 	resp.Status = http.StatusOK
