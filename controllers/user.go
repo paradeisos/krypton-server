@@ -2,12 +2,11 @@ package controllers
 
 import (
 	"encoding/json"
+	"net/http"
+	"strings"
+
 	"krypton-server/errors"
 	"krypton-server/models"
-	"krypton-server/utils/jwt"
-	"net/http"
-
-	"strings"
 
 	"github.com/astaxie/beego"
 )
@@ -41,7 +40,13 @@ func (c *User) Login() {
 		return
 	}
 
-	token := jwt.GenToken(user.Id.Hex(), user.Username, 86400)
+	token, err := sessionManager.NewSession(user.Id.Hex(), user.Username).Token()
+	if err != nil {
+		c.Data["json"] = errors.NewErrorResponse(errors.InternalError)
+		c.ServeJSON()
+		return
+	}
+
 	cookie := http.Cookie{
 		Name:   "Authorization",
 		Value:  token,
@@ -64,7 +69,27 @@ func (c *User) Logout() {
 }
 
 // register
-func (c *User) Post() {
+func (c *User) Register() {
+	var params *UserRegisterParams
+	resp := &Response{}
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &params)
+	if err != nil {
+		beego.Error(err)
+
+	}
+
+	user := models.User.NewUserModel(params.Username, params.Email, params.Password, "")
+	err = user.Save()
+	if err != nil {
+		beego.Error(err)
+	}
+
+	resp.Status = http.StatusOK
+	c.Data["json"] = resp
+	c.ServeJSON()
+}
+
+func (c *User) Active() {
 	var params *UserRegisterParams
 	resp := &Response{}
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &params)
