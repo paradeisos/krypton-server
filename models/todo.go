@@ -3,6 +3,8 @@ package models
 import (
 	"time"
 
+	"krypton-server/options"
+
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -74,48 +76,52 @@ func (todo *TodoModel) Save() (err error) {
 	return
 }
 
-type ListTodoParams struct {
-	Page       int
-	Limit      int
-	From       time.Time
-	To         time.Time
-	Uid        string
-	IsAll      bool
-	IsFinished bool
+func (_ *_Todo) Find(id string) (todo *TodoModel, err error) {
+	if !bson.IsObjectIdHex(id) {
+		return nil, ErrInvalidId
+	}
+
+	bsonID := bson.ObjectIdHex(id)
+
+	Todo.Query(func(c *mgo.Collection) {
+		err = c.FindId(bsonID).One(&todo)
+	})
+
+	return
 }
 
-func (_ *_Todo) List(params ListTodoParams) (total int, todos []*TodoModel, err error) {
-	offset := (params.Page - 1) * params.Limit
+func (_ *_Todo) List(opts *options.ListTodoOpts) (total int, todos []*TodoModel, err error) {
+	offset := (opts.Page - 1) * opts.Limit
 	if offset < 0 {
 		offset = 0
 	}
 
 	query := bson.M{}
-	if params.From.After(params.To) {
+	if opts.From.After(opts.To) {
 		return 0, nil, ErrInvalidParams
 	}
 
 	dueRange := bson.M{}
-	if !params.From.IsZero() {
-		dueRange["$gte"] = params.From
+	if !opts.From.IsZero() {
+		dueRange["$gte"] = opts.From
 	}
-	if !params.To.IsZero() {
-		dueRange["$lte"] = params.To
+	if !opts.To.IsZero() {
+		dueRange["$lte"] = opts.To
 	}
 	if len(dueRange) > 0 {
 		query["due"] = dueRange
 	}
 
-	if params.Uid != "" {
-		query["uid"] = params.Uid
+	if opts.Uid != "" {
+		query["uid"] = opts.Uid
 	}
 
-	if !params.IsAll {
-		query["finished"] = params.IsFinished
+	if !opts.IsAll {
+		query["finished"] = opts.IsFinished
 	}
 
 	Todo.Query(func(c *mgo.Collection) {
-		err = c.Find(query).Skip(offset).Limit(params.Limit).Sort("due").All(&todos)
+		err = c.Find(query).Skip(offset).Limit(opts.Limit).Sort("due").All(&todos)
 		if err == nil {
 			total, err = c.Find(query).Count()
 		}
@@ -131,20 +137,6 @@ func (_ *_Todo) Delete(id string) (err error) {
 
 	Todo.Query(func(c *mgo.Collection) {
 		err = c.RemoveId(bson.ObjectIdHex(id))
-	})
-
-	return
-}
-
-func (_ *_Todo) Find(id string) (todo *TodoModel, err error) {
-	if !bson.IsObjectIdHex(id) {
-		return nil, ErrInvalidId
-	}
-
-	bsonID := bson.ObjectIdHex(id)
-
-	Todo.Query(func(c *mgo.Collection) {
-		err = c.FindId(bsonID).One(&todo)
 	})
 
 	return
