@@ -116,10 +116,6 @@ func (_ *_Todo) List(opts *options.ListTodoOpts) (total int, todos []*TodoModel,
 		query["uid"] = opts.Uid
 	}
 
-	if !opts.IsAll {
-		query["finished"] = opts.IsFinished
-	}
-
 	Todo.Query(func(c *mgo.Collection) {
 		err = c.Find(query).Skip(offset).Limit(opts.Limit).Sort("due").All(&todos)
 		if err == nil {
