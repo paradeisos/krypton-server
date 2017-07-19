@@ -73,6 +73,7 @@ func (c *Tomato) Get() {
 	}
 
 	c.Data["json"] = Newresponse(http.StatusOK, "", tomato)
+
 	c.ServeJSON()
 }
 
