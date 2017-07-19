@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"krypton-server/models"
+	"krypton-server/options"
 	"krypton-server/utils"
 	"testing"
 	"time"
@@ -14,7 +15,7 @@ import (
 
 func Test_Tomato(t *testing.T) {
 	uid := bson.NewObjectId().Hex()
-	params := &CreateTomatoParams{
+	opts := &options.CreateTomatoOpts{
 		Uid:      uid,
 		Start:    time.Now(),
 		End:      time.Now().Add(25 * time.Minute),
@@ -23,7 +24,7 @@ func Test_Tomato(t *testing.T) {
 	}
 
 	// test for creating tomato
-	r := utils.RequestJson(http.MethodPost, "/tomato", params)
+	r := utils.RequestJson(http.MethodPost, "/tomato", opts)
 	response := mockRequest(r)
 	assertion := assert.New(t)
 	assertion.Equal(200, response.Status)
@@ -41,11 +42,11 @@ func Test_Tomato(t *testing.T) {
 
 	// test for updating tomato
 	newDesc := "new description"
-	var updataParams = UpdateTomatoParams{
+	var updataOpts = options.UpdateTomatoOpts{
 		ID:   tomatoes[0].Id.Hex(),
 		Desc: newDesc,
 	}
-	r = utils.RequestJson(http.MethodPut, "/tomato", updataParams)
+	r = utils.RequestJson(http.MethodPut, "/tomato", updataOpts)
 	response = mockRequest(r)
 	assertion.Equal(200, response.Status)
 }

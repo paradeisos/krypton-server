@@ -1,6 +1,7 @@
 package models
 
 import (
+	"krypton-server/options"
 	"testing"
 	"time"
 
@@ -31,10 +32,9 @@ func Test_Todo_CRUD(t *testing.T) {
 	assertion.Equal(true, todo.Finished)
 
 	// find
-	total, todos, err := Todo.List(ListTodoParams{
+	total, todos, err := Todo.List(&options.ListTodoOpts{
 		Page:  1,
 		Limit: 2,
-		IsAll: true,
 	})
 	assertion.Nil(err)
 	assertion.Equal(1, len(todos))

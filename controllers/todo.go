@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"krypton-server/errors"
 	"krypton-server/models"
+	"krypton-server/options"
 
 	"net/http"
 
@@ -15,7 +16,7 @@ type Todo struct {
 }
 
 func (c *Todo) Post() {
-	var opts *CreateTodoOpts
+	var opts *options.CreateTodoOpts
 	resp := &Response{}
 
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &opts)

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"krypton-server/errors"
 	"krypton-server/models"
+	"krypton-server/options"
 
 	"net/http"
 
@@ -15,7 +16,7 @@ type Tomato struct {
 }
 
 func (c *Tomato) Post() {
-	var opts *CreateTomatoOpts
+	var opts *options.CreateTomatoOpts
 
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &opts)
 	if err != nil {
@@ -53,7 +54,7 @@ func (c *Tomato) Get() {
 }
 
 func (c *Tomato) Put() {
-	var opts *UpdateTomatoOpts
+	var opts *options.UpdateTomatoOpts
 
 	if json.Unmarshal(c.Ctx.Input.RequestBody, &opts) != nil {
 		c.Data["json"] = errors.NewErrorResponse(errors.InvalidParameter)

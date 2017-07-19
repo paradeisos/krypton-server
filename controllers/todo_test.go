@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"krypton-server/options"
 	"krypton-server/utils"
 	"net/http"
 	"testing"
@@ -16,7 +17,7 @@ var (
 
 func Test_Toto(t *testing.T) {
 	// creating todo item
-	opts := &CreateTodoParams{
+	opts := &options.CreateTodoOpts{
 		Title:   testTitle,
 		Content: testContent,
 		Due:     time.Now(),
