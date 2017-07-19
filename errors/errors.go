@@ -16,6 +16,7 @@ func (e Error) Error() string {
 
 var (
 	InvalidParameter = Error{400, "InvalidParameter", "A parameter specified in a request is not valid, is unsupported, or cannot be used."}
+	AccessForbidden  = Error{403, "AccessDenied", "You have no correct right to access"}
 	InternalError    = Error{500, "InternalError", "An internal error has occurred. Retry your request."}
 )
 
