@@ -15,14 +15,14 @@ type Tomato struct {
 }
 
 func (c *Tomato) Post() {
-	var params *CreateTomatoParams
+	var opts *CreateTomatoOpts
 
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &params)
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &opts)
 	if err != nil {
 		beego.Error(err)
 	}
 
-	tomato := models.Tomato.NewTomatoModel(params.Uid, params.Start, params.End, params.Desc, params.Finished)
+	tomato := models.Tomato.NewTomatoModel(opts.Uid, opts.Start, opts.End, opts.Desc, opts.Finished)
 
 	if err := tomato.Save(); err != nil {
 		beego.Error(err)
@@ -53,25 +53,25 @@ func (c *Tomato) Get() {
 }
 
 func (c *Tomato) Put() {
-	var params *UpdateTomatoParams
+	var opts *UpdateTomatoOpts
 
-	if json.Unmarshal(c.Ctx.Input.RequestBody, &params) != nil {
+	if json.Unmarshal(c.Ctx.Input.RequestBody, &opts) != nil {
 		c.Data["json"] = errors.NewErrorResponse(errors.InvalidParameter)
 		c.ServeJSON()
 		return
 	}
 
-	tomato, err := models.Tomato.Find(params.ID)
+	tomato, err := models.Tomato.Find(opts.ID)
 	if err != nil {
 		c.Data["json"] = errors.NewErrorResponse(errors.InvalidParameter)
 		c.ServeJSON()
 		return
 	}
 
-	tomato.Start = params.Start
-	tomato.End = params.End
-	tomato.Desc = params.Desc
-	tomato.Finished = params.Finished
+	tomato.Start = opts.Start
+	tomato.End = opts.End
+	tomato.Desc = opts.Desc
+	tomato.Finished = opts.Finished
 
 	if err := tomato.Update(); err != nil {
 		c.Data["json"] = errors.NewErrorResponse(errors.InternalError)

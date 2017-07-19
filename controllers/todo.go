@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"krypton-server/errors"
 	"krypton-server/models"
-	"time"
 
 	"net/http"
 
@@ -15,18 +14,11 @@ type Todo struct {
 	beego.Controller
 }
 
-type CreateTodoParams struct {
-	Uid     string    `json:"uid"`
-	Title   string    `json:"title"`
-	Content string    `json:"content"`
-	Due     time.Time `json:"due"`
-}
-
 func (c *Todo) Post() {
-	var params *CreateTodoParams
+	var opts *CreateTodoOpts
 	resp := &Response{}
 
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &params)
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &opts)
 	if err != nil {
 		beego.Error(err)
 	}
@@ -34,7 +26,7 @@ func (c *Todo) Post() {
 	// TODO uid should from session?
 	uid := ""
 
-	todo := models.Todo.NewModel(uid, params.Title, params.Content, params.Due)
+	todo := models.Todo.NewModel(uid, opts.Title, opts.Content, opts.Due)
 
 	if err := todo.Save(); err != nil {
 		beego.Error(err)
