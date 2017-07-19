@@ -32,31 +32,6 @@ func (c *Tomato) Post() {
 	c.ServeJSON()
 }
 
-func (c *Tomato) Delete() {
-	id := c.GetString("id")
-	if id == "" {
-		c.Data["json"] = errors.NewErrorResponse(errors.InvalidParameter)
-		c.ServeJSON()
-		return
-	}
-
-	tomato, err := models.Tomato.Find(id)
-	if err != nil {
-		c.Data["json"] = errors.NewErrorResponse(errors.InvalidParameter)
-		c.ServeJSON()
-		return
-	}
-
-	if tomato.Delete() != nil {
-		c.Data["json"] = errors.NewErrorResponse(errors.InternalError)
-		c.ServeJSON()
-		return
-	}
-
-	c.Data["json"] = Newresponse(http.StatusOK, "", nil)
-	c.ServeJSON()
-}
-
 func (c *Tomato) Get() {
 	id := c.GetString("id")
 	if id == "" {
@@ -99,6 +74,31 @@ func (c *Tomato) Put() {
 	tomato.Finished = params.Finished
 
 	if err := tomato.Update(); err != nil {
+		c.Data["json"] = errors.NewErrorResponse(errors.InternalError)
+		c.ServeJSON()
+		return
+	}
+
+	c.Data["json"] = Newresponse(http.StatusOK, "", nil)
+	c.ServeJSON()
+}
+
+func (c *Tomato) Delete() {
+	id := c.GetString("id")
+	if id == "" {
+		c.Data["json"] = errors.NewErrorResponse(errors.InvalidParameter)
+		c.ServeJSON()
+		return
+	}
+
+	tomato, err := models.Tomato.Find(id)
+	if err != nil {
+		c.Data["json"] = errors.NewErrorResponse(errors.InvalidParameter)
+		c.ServeJSON()
+		return
+	}
+
+	if tomato.Delete() != nil {
 		c.Data["json"] = errors.NewErrorResponse(errors.InternalError)
 		c.ServeJSON()
 		return
