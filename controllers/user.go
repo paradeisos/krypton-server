@@ -75,17 +75,23 @@ func (c *User) Register() {
 	resp := &Response{}
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &params)
 	if err != nil {
-		beego.Error(err)
+		c.Data["json"] = errors.NewErrorResponse(errors.InternalError)
+		c.ServeJSON()
+		return
 
 	}
 
 	user := models.User.NewUserModel(params.Username, params.Email, params.Password, "")
 	err = user.Save()
 	if err != nil {
-		beego.Error(err)
+		c.Data["json"] = errors.NewErrorResponse(errors.InternalError)
+		c.ServeJSON()
+		return
 	}
 
-	token, err := sessionManager.NewSession(user.Id.Hex(), params.Username).Token()
+	session := sessionManager.NewSession(user.Id.Hex(), params.Username)
+
+	token, err := session.Token()
 	if err != nil {
 		c.Data["json"] = errors.NewErrorResponse(errors.InternalError)
 		c.ServeJSON()

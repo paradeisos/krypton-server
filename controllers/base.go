@@ -11,7 +11,7 @@ var (
 	sessionManager *session.SessionManger
 )
 
-func init() {
+func InitEnv() {
 	mailer = mail.NewMail(
 		beego.AppConfig.String("mail_host"),
 		beego.AppConfig.String("mail_email"),

@@ -17,7 +17,7 @@ func TestUser_Register(t *testing.T) {
 		Email:    uuid.NewV4().String() + "@test.com",
 		Password: uuid.NewV4().String(),
 	}
-	r := utils.RequestJson(http.MethodPost, "/user", params)
+	r := utils.RequestJson(http.MethodPost, "/user/register", params)
 	response := mockRequest(r)
 
 	assertion.Equal(200, response.Status)

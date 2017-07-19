@@ -11,6 +11,18 @@ import (
 	"testing"
 )
 
+func init() {
+	absPath, err := filepath.Abs("")
+	if err != nil {
+		beego.Error(err.Error())
+		return
+	}
+
+	apppath := filepath.Dir(absPath)
+
+	beego.TestBeegoInit(apppath)
+}
+
 func mockRequest(request *http.Request) (response *Response) {
 	w := httptest.NewRecorder()
 	beego.BeeApp.Handlers.ServeHTTP(w, request)
@@ -23,16 +35,8 @@ func mockRequest(request *http.Request) (response *Response) {
 }
 
 func TestMain(m *testing.M) {
-	absPath, err := filepath.Abs("")
-	if err != nil {
-		beego.Error(err.Error())
-		return
-	}
 
-	apppath := filepath.Dir(absPath)
-
-	beego.TestBeegoInit(apppath)
-
+	InitEnv()
 	// init models
 	models.InitMongo()
 
