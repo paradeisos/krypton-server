@@ -16,13 +16,13 @@ var (
 
 func Test_Toto(t *testing.T) {
 	// creating todo item
-	params := &CreateTodoParams{
+	opts := &CreateTodoParams{
 		Title:   testTitle,
 		Content: testContent,
 		Due:     time.Now(),
 	}
 
-	r := utils.RequestJson(http.MethodPost, "/todo", params)
+	r := utils.RequestJson(http.MethodPost, "/todo", opts)
 	resp := mockRequest(r)
 	assertion := assert.New(t)
 	assertion.Equal(200, resp.Status)
