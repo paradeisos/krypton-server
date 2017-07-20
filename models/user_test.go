@@ -21,7 +21,7 @@ func Test_NewUserModel(t *testing.T) {
 	assertion.Equal(username, user.Username)
 	assertion.Equal(email, user.Email)
 	assertion.Equal(password, user.Password)
-	assertion.Equal(UserStatusActive, user.Status)
+	assertion.Equal(UserStatusInactive, user.Status)
 	assertion.Equal(desc, user.Description)
 }
 

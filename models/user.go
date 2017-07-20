@@ -31,7 +31,7 @@ func (_ *_User) NewUserModel(username, email, password, desc string) *UserModel 
 		Username:    username,
 		Email:       email,
 		Password:    password,
-		Status:      UserStatusActive,
+		Status:      UserStatusInactive,
 		Description: desc,
 		CreatedAt:   now,
 		UpdatedAt:   now,

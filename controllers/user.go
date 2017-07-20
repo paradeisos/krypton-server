@@ -2,12 +2,12 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
+	"net/http"
+	"strings"
+
 	"krypton-server/errors"
 	"krypton-server/models"
-	"krypton-server/utils/jwt"
-	"net/http"
-
-	"strings"
 
 	"github.com/astaxie/beego"
 )
@@ -41,7 +41,13 @@ func (c *User) Login() {
 		return
 	}
 
-	token := jwt.GenToken(user.Id.Hex(), user.Username, 86400)
+	token, err := sessionManager.NewSession(user.Id.Hex(), user.Username).Token()
+	if err != nil {
+		c.Data["json"] = errors.NewErrorResponse(errors.InternalError)
+		c.ServeJSON()
+		return
+	}
+
 	cookie := http.Cookie{
 		Name:   "Authorization",
 		Value:  token,
@@ -64,19 +70,65 @@ func (c *User) Logout() {
 }
 
 // register
-func (c *User) Post() {
+func (c *User) Register() {
 	var params *UserRegisterParams
 	resp := &Response{}
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &params)
 	if err != nil {
-		beego.Error(err)
+		c.Data["json"] = errors.NewErrorResponse(errors.InternalError)
+		c.ServeJSON()
+		return
 
 	}
 
 	user := models.User.NewUserModel(params.Username, params.Email, params.Password, "")
 	err = user.Save()
 	if err != nil {
-		beego.Error(err)
+		c.Data["json"] = errors.NewErrorResponse(errors.InternalError)
+		c.ServeJSON()
+		return
+	}
+
+	session := sessionManager.NewSession(user.Id.Hex(), params.Username)
+
+	token, err := session.Token()
+	if err != nil {
+		c.Data["json"] = errors.NewErrorResponse(errors.InternalError)
+		c.ServeJSON()
+		return
+	}
+
+	mailer.SendRegisterMail(params.Email, fmt.Sprintf("%s%s?activeCode=%s", beego.AppConfig.String("host")+"/user/active", token))
+
+	resp.Status = http.StatusOK
+	c.Data["json"] = resp
+	c.ServeJSON()
+}
+
+func (c *User) Active() {
+	token := c.GetString("activeCode")
+	resp := &Response{}
+	session, err := sessionManager.NewSessionByToken(token)
+	if err != nil {
+		c.Data["json"] = errors.NewErrorResponse(errors.AccessForbidden)
+		c.ServeJSON()
+		return
+	}
+
+	username := session.UserName
+	user, err := models.User.FindByUsername(username)
+	if err != nil {
+		c.Data["json"] = errors.NewErrorResponse(errors.InternalError)
+		c.ServeJSON()
+		return
+	}
+
+	user.Status = models.UserStatusActive
+	err = user.Save()
+	if err != nil {
+		c.Data["json"] = errors.NewErrorResponse(errors.InternalError)
+		c.ServeJSON()
+		return
 	}
 
 	resp.Status = http.StatusOK
