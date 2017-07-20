@@ -1,8 +1,8 @@
-package controllers
+package options
 
 import "time"
 
-type CreateTomatoParams struct {
+type CreateTomatoOpts struct {
 	Uid      string    `json:"uid"`
 	Start    time.Time `json:"start"`
 	End      time.Time `json:"end"`
@@ -10,7 +10,7 @@ type CreateTomatoParams struct {
 	Finished bool      `json:"finished"`
 }
 
-type UpdateTomatoParams struct {
+type UpdateTomatoOpts struct {
 	ID       string    `json:"id"`
 	Start    time.Time `json:"start"`
 	End      time.Time `json:"end"`

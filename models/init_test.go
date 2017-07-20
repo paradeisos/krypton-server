@@ -21,7 +21,8 @@ func TestMain(m *testing.M) {
 	InitMongo()
 
 	code := m.Run()
-	Mongo().Session().DB(mongo.Database()).DropDatabase()
+
+	DropDatabase()
 
 	os.Exit(code)
 }

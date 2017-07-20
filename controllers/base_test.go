@@ -2,13 +2,14 @@ package controllers
 
 import (
 	"encoding/json"
-	"github.com/astaxie/beego"
 	"krypton-server/models"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/astaxie/beego"
 )
 
 func init() {
@@ -42,6 +43,8 @@ func TestMain(m *testing.M) {
 
 	// running all test suites
 	result := m.Run()
+
+	models.DropDatabase()
 
 	// output test result
 	os.Exit(result)

@@ -32,3 +32,7 @@ func InitMongo() {
 func Mongo() *Model {
 	return mongo
 }
+
+func DropDatabase() {
+	Mongo().Session().DB(mongo.Database()).DropDatabase()
+}
