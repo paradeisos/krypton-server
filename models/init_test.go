@@ -26,7 +26,3 @@ func TestMain(m *testing.M) {
 
 	os.Exit(code)
 }
-
-func DropDatabase() {
-	Mongo().Session().DB(mongo.Database()).DropDatabase()
-}
