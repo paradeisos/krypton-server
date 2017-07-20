@@ -1,12 +1,12 @@
 package session
 
 import (
-	"math/rand"
 	"strings"
 	"time"
+	"math/rand"
+	"errors"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/pkg/errors"
 )
 
 const (
